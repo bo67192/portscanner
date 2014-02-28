@@ -9,7 +9,7 @@ static void main(String[] args) {
 	def scanResults = ScanOutputParser.parseNmapOutput(nmapScanOutput.toString())
 	
 	println('Importing approved ports')
-	def approvedPorts = ApprovedPorts.getApprovedPorts(/Input\ApprovedPorts.txt/)
+	def approvedPorts = ApprovedPorts.getApprovedPorts(/Input\ApprovedPorts.csv/)
 	
 	println('Comparing scan results to approved ports');
 	def newPorts = scanResults.inject([:]) {map, key, value ->
