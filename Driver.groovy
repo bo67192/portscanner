@@ -2,11 +2,16 @@ import ScanOutputParser
 
 static void main(String[] args) {
 	
-	def approvedPortsFile = new File(/Input\ApprovedPorts.csv/);
-	def nmapScanOutput = NmapScanner.runNmapScan(/Input\Addresses.txt/);
+	println('Running Nmap scan')
+	def nmapScanOutput = NmapScanner.runNmapScan(/Input\IPs.txt/);
+	
+	println('Parsing scan results')
 	def scanResults = ScanOutputParser.parseNmapOutput(nmapScanOutput.toString())
-
-	def approvedPorts = ApprovedPorts.getApprovedPorts(/Input\ApprovedPorts.csv/)
+	
+	println('Importing approved ports')
+	def approvedPorts = ApprovedPorts.getApprovedPorts(/Input\ApprovedPorts.txt/)
+	
+	println('Comparing scan results to approved ports');
 	def newPorts = scanResults.inject([:]) {map, key, value ->
 		def diff = value - approvedPorts[key]
 		
@@ -31,6 +36,7 @@ static void main(String[] args) {
 	Output.printReport('Unapproved Ports', newPorts)
 	Output.printReport('Closed Ports\n', closedPorts)
 	
+	println('Saving reports')
 	Output.saveReport("Reports/UnapprovedPorts-${new Date().format('MM-dd-yyyy')}.csv", newPorts)
 	Output.saveReport("Reports/ClosedPorts-${new Date().format('MM-dd-yyyy')}.csv", closedPorts)
 }
